@@ -1,7 +1,6 @@
 'use strict';
 
 function waitFor(element, eventName) {
-  // Перевірка, що переданий дійсний DOM-елемент
   if (!element || typeof element.addEventListener !== 'function') {
     throw new TypeError('waitFor: first argument must be a DOM element');
   }
@@ -14,12 +13,11 @@ function waitFor(element, eventName) {
           `It was ${eventName} on the element: ${element.nodeName}, id: ${element.id}.`,
         );
       },
-      { once: true }, // виконається лише один раз
+      { once: true },
     );
   });
 }
 
-// Функція виводить повідомлення у DOM
 const printMessage = (message) => {
   const div = document.createElement('div');
 
@@ -31,29 +29,33 @@ const printMessage = (message) => {
   }
 };
 
-// Експортуємо функції для інших файлів або тестів
-// В залежності від системи модулів можна використовувати один з варіантів:
-
-// 1️⃣ ES Modules
-// export { waitFor, printMessage };
-
-// 2️⃣ Глобальна доступність через window
+// Глобальна видимість для старих скриптів
 window.waitFor = waitFor;
 window.printMessage = printMessage;
 
-// Приклад використання (необов'язково, можна коментувати)
+// ESM експорт для сучасних тестів
+export { waitFor, printMessage };
 
-const loginField = document.getElementById('login');
-const passwordField = document.getElementById('password');
-const button = document.getElementById('submit');
+// Демонстраційні виклики — тільки якщо елементи існують
+document.addEventListener('DOMContentLoaded', () => {
+  const loginField = document.getElementById('login');
+  const passwordField = document.getElementById('password');
+  const button = document.getElementById('submit');
 
-waitFor(loginField, 'click').then(printMessage);
-waitFor(passwordField, 'click').then(printMessage);
-waitFor(button, 'click').then(printMessage);
+  if (loginField) {
+    waitFor(loginField, 'click').then(printMessage);
+    waitFor(loginField, 'input').then(printMessage);
+    waitFor(loginField, 'blur').then(printMessage);
+  }
 
-waitFor(loginField, 'input').then(printMessage);
-waitFor(passwordField, 'input').then(printMessage);
+  if (passwordField) {
+    waitFor(passwordField, 'click').then(printMessage);
+    waitFor(passwordField, 'input').then(printMessage);
+    waitFor(passwordField, 'blur').then(printMessage);
+  }
 
-waitFor(loginField, 'blur').then(printMessage);
-waitFor(passwordField, 'blur').then(printMessage);
-waitFor(button, 'blur').then(printMessage);
+  if (button) {
+    waitFor(button, 'click').then(printMessage);
+    waitFor(button, 'blur').then(printMessage);
+  }
+});
